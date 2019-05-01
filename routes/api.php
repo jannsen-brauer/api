@@ -13,6 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'v1'], function () {
+    Route::post('login', "LoginController@login");
+
+    Route::group(['middleware' => [ 'auth:api']], function () {
+
+        Route::post('/user', function (Request $request) {
+            return Auth::user()->token();
+        });
+        Route::post('logout', "LoginController@logout");
+
+    });
+});
+
+Route::get('/', function (Request $request) {
+    return response()->json(["status" => "OK"]);
 });
